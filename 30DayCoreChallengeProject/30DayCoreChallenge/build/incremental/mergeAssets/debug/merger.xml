@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="main" >
+        <source path="/Users/oakley/Documents/projects/30DayCoreChallenge/30DayCoreChallengeProject/30DayCoreChallenge/src/main/assets" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="/Users/oakley/Documents/projects/30DayCoreChallenge/30DayCoreChallengeProject/30DayCoreChallenge/src/debug/assets" />
+    </dataSet>
+
+</merger>
