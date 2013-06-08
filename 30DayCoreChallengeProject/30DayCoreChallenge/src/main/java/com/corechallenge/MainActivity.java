@@ -1,7 +1,10 @@
-package com.abchallenge;
+package com.corechallenge;
 
+
+import com.corechallenge.utils.JSONParser;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
+import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -163,7 +166,7 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
                 case 2:
                     return getString(R.string.leg_lifts).toUpperCase(l);
                 case 3:
-                    return getString(R.string.leg_lifts).toUpperCase(l);
+                    return getString(R.string.plank).toUpperCase(l);
 
             }
             return null;
@@ -191,8 +194,16 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     private void getWorkoutForToday() throws IOException,JSONException{
 
 
+        //InputStream is = getResources().openRawResource(R.raw.workouts);
+        //InputStream is = getAssets().open(this.getFilesDir() + "/workouts.json");
+        AssetManager am = this.getAssets();
+        JSONParser jsonParser = new JSONParser();
+        InputStream is = am.open(R.string.workouts_sched);
+        JSONObject obj = jsonParser.getJSONFromUrl( is );
 
-//        InputStream is = getAssets().open(this.getFilesDir() + "/workouts.json");
+//
+
+
 //        BufferedReader br = new BufferedReader(new InputStreamReader(is));
 //        String line = null;
 //        while ((line = br.readLine()) != null) {
@@ -233,32 +244,6 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
 
     }
 
-
-    private JSONObject data(){
-        return
-                "day1": {
-            "situps": 15,
-                    "crunches": 5,
-                    "leg_lifts": 5,
-                    "plank":10
-        }
-
-        "day2": {
-            "situps": 120,
-                    "crunches": 8,
-                    "leg_lifts": 8,
-                    "plank":12
-        }
-
-        "day3": {
-            "situps": 25,
-                    "crunches": 10,
-                    "leg_lifts": 10,
-                    "plank":15
-        }
-
-        ;
-    }
 
     /**
      * A dummy fragment representing a section of the app, but that simply
