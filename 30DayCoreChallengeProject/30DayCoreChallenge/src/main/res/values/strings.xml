@@ -12,4 +12,8 @@
 
     <string name="workouts_sched">workouts.json</string>
 
+    <string name="done">Done!</string>
+    <string name="doing">Click when complete</string>
+
+    <string name="start">Start planking</string>
 </resources>

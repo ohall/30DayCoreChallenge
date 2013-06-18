@@ -1,33 +1,24 @@
 package com.corechallenge;
 
 
-import com.corechallenge.utils.JSONParser;
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
-import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Chronometer;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.io.IOException;
 
 public class MainActivity extends FragmentActivity implements ActionBar.TabListener {
 
@@ -135,16 +126,12 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
             Return a DummySectionFragment (defined as a static inner class
             below) with the page number as its lone argument.
             */
-            try{
-                getWorkoutForToday();
-            }catch (IOException ex){
-               IOException wtfBRO = ex;
-            }catch (JSONException jsonex){
 
-            }
-            Fragment fragment = new ChallengeSectionFragment();
+
+            ChallengeSectionFragment fragment = new ChallengeSectionFragment();
             Bundle args = new Bundle();
             args.putInt(ChallengeSectionFragment.ARG_SECTION_NUMBER, position + 1);
+            args.putString(ChallengeSectionFragment.ARG_SECTION_LABEL, getPageTitle(position).toString() );
             fragment.setArguments(args);
             return fragment;
         }
@@ -178,71 +165,74 @@ public class MainActivity extends FragmentActivity implements ActionBar.TabListe
     public static class ChallengeSectionFragment extends Fragment{
 
         public static final String ARG_SECTION_NUMBER = "section_number";
+        public static final String ARG_SECTION_LABEL = "section_label";
+
+        public Workout todaysWorkout;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main_dummy, container, false);
+            todaysWorkout = getWorkoutForToday();
+            View rootView;
+            String movement = getArguments().getString(ARG_SECTION_LABEL);
+            if(movement.equalsIgnoreCase(getString(R.string.plank))){
+               rootView = inflater.inflate(R.layout.fragment_plank_workout, container, false);
+            }else{
+                rootView = inflater.inflate(R.layout.fragment_main_workout, container, false);
+                Chronometer chron = (Chronometer) rootView.findViewById(R.id.chronometer);
+                chron.(todaysWorkout.getRepsByMovement(movement)*1000);
+            }
             TextView chTextView = (TextView) rootView.findViewById(R.id.section_label);
-            chTextView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+            chTextView.setText( todaysWorkout.getRepsByMovement(movement) + " " + movement );
+
+            ToggleButton goonButton  = (ToggleButton) rootView.findViewById(R.id.doneButton);
+
             return rootView;
         }
 
-    }
 
+        public Workout getWorkoutForToday() {
+            //TODO: Schedule workouts by calendar and get from some services\
+            return new Workout(10,7,5,20);
+        }
 
-    private void getWorkoutForToday() throws IOException,JSONException{
+        public class Workout {
+            public int situps;
+            public int crunches;
+            public int legLifts;
+            public int plank;
 
+            public Workout(int pSitups, int pCrunches, int pLegLifts, int pPlank ){
+                situps      = pSitups;
+                crunches    = pCrunches;
+                legLifts    = pLegLifts;
+                plank       = pPlank;
 
-        //InputStream is = getResources().openRawResource(R.raw.workouts);
-        //InputStream is = getAssets().open(this.getFilesDir() + "/workouts.json");
-        AssetManager am = this.getAssets();
-        JSONParser jsonParser = new JSONParser();
-        InputStream is = am.open(R.string.workouts_sched);
-        JSONObject obj = jsonParser.getJSONFromUrl( is );
+            }
 
-//
+            public int getRepsByMovement(String pMovement){
 
-
-//        BufferedReader br = new BufferedReader(new InputStreamReader(is));
-//        String line = null;
-//        while ((line = br.readLine()) != null) {
-//
-//            JSONArray jsonArray = new JSONArray(line);
-//            Log.i(MainActivity.class.getName(),
-//                    "Number of entries " + jsonArray.length());
-//            for (int i = 0; i < jsonArray.length(); i++) {
-//                JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                Log.i(MainActivity.class.getName(), jsonObject.getString("text"));
-//            }
-//
-//        }
-//        br.close();
-
-
-
-
-
-
-
-    }
-
-
-    public class Workout {
-        public int situps;
-        public int crunches;
-        public int legLifts;
-        public int plank;
-
-        public Workout(int pSitups, int pCrunches, int pLegLifts, int pPlank ){
-            situps      = pSitups;
-            crunches    = pCrunches;
-            legLifts    = pLegLifts;
-            plank       = pPlank;
-
+                String wtvr = getString(R.string.situps).toUpperCase();
+                if(pMovement.equalsIgnoreCase(getString(R.string.situps))){
+                    return situps;
+                }else if(pMovement.equalsIgnoreCase(getString(R.string.crunches))){
+                    return crunches;
+                }else if(pMovement.equalsIgnoreCase(getString(R.string.leg_lifts))){
+                    return legLifts;
+                }else if(pMovement.equalsIgnoreCase(getString(R.string.plank))){
+                    return plank;
+                }else{
+                    return 0;
+                }
+            }
         }
 
     }
+
+
+
+
+
 
 
     /**
